@@ -129,4 +129,32 @@ public class UserResourceTest extends JerseyTest {
         int notFound = target("/users").path("tking").request().delete().getStatus();
         assertEquals(404, notFound);
     }
+
+    /**
+     *
+     * Vérifie que la modification d'une ressource est effective
+     */
+    @Test
+    public void test_I_ModifyUser() {
+        User modified = new User("epeel", "Peel", "epeel@cia.usa");
+        Entity<User> userEntity = Entity.entity(modified, MediaType.APPLICATION_JSON);
+
+        int noContent = target("/users").path("epeel").request().put(userEntity).getStatus();
+        assertEquals(204, noContent);
+
+        User retrieved = target("/users").path("epeel").request().get(User.class);
+        assertEquals(modified, retrieved);
+    }
+
+    /**
+     *
+     * Vérifie que la suppression d'un utilisateur inexistant renvoie 404
+     */
+    @Test
+    public void test_J_ModifyInexistantUser() {
+       User inexistant = new User("jsteed", "Steed", "jsteed@mi5.uk");
+       Entity<User> userEntity = Entity.entity(inexistant, MediaType.APPLICATION_JSON);
+        int notFound = target("/users").path("jsteed").request().put(userEntity).getStatus();
+        assertEquals(404, notFound);
+    }
 }
