@@ -171,4 +171,13 @@ public class UserResourceTest extends JerseyTest {
 
         assertEquals(201, code);
     }
+
+    /**
+     * Vérifie qu'on récupère bien un utilisateur avec le type MIME application/xml
+     */
+    @Test
+    public void test_L_GetUserAsXml() {
+        int code = target("/users").path("tking").request(MediaType.APPLICATION_XML).get().getStatus();
+        assertEquals(code, 200);
+    }
 }

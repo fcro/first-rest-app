@@ -1,5 +1,8 @@
 package fr.univ_lille.iut.crosnief;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class User {
 	private String login;
 	private String name;
