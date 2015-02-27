@@ -1,6 +1,7 @@
 package fr.univ_lille.iut.crosnief;
 
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
@@ -16,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
+import java.util.List;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UserResourceTest extends JerseyTest {
@@ -26,6 +28,15 @@ public class UserResourceTest extends JerseyTest {
     @Override
     protected Application configure() {
         return new ResourceConfig(UserResource.class);  
+    }
+
+    /**
+     * Vérifie qu'initialement on a une liste d'utilisateurs vide
+     */
+    @Test
+    public void test_A_GetEmptyListofUsers() {
+        List<User> list = target("/users").request().get(new GenericType<List<User>>(){});
+        assertTrue(list.isEmpty());
     }
 
     /**
@@ -60,5 +71,39 @@ public class UserResourceTest extends JerseyTest {
 
         int same = target("/users").request().post(userEntity).getStatus();
         assertEquals(409, same);
+    }
+
+    /**
+     * Vérifie que je renvoie bien une liste contenant tous les utilisateurs (ici 2)
+     */
+    @Test
+    public void test_D_GetTwoUsers() {
+        User user = new User("epeel", "Peel", "epeel@mi5.uk");
+        Entity<User> userEntity = Entity.entity(user, MediaType.APPLICATION_JSON);
+
+        target("/users").request().post(userEntity);
+
+        List<User> list = target("/users").request().get(new GenericType<List<User>>(){});
+        assertEquals(2, list.size());
+    }
+
+    /**
+     * Vérifie la récupération d'un utilisateur spécifique
+     */
+    @Test
+    public void test_E_GetOneUser() {
+        User user = new User("jsteed", "Steed", "jsteed@mi5.uk");
+
+        User result = target("/users").path("jsteed").request().get(User.class);
+        assertEquals(user, result);
+    }
+
+    /**
+     * Vérifie que la récupération d'un utilisateur inexistant renvoie 404
+     */
+    @Test
+    public void test_F_GetInexistantUser() {
+        int notFound = target("/users").path("tking").request().get().getStatus();
+        assertEquals(404, notFound);
     }
 }

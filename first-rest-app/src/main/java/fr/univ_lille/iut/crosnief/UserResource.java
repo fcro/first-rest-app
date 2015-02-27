@@ -1,7 +1,10 @@
 package fr.univ_lille.iut.crosnief;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.POST;
+import javax.ws.rs.PathParam;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -9,6 +12,8 @@ import javax.ws.rs.core.Context;
 
 import java.net.URI;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -30,6 +35,33 @@ public class UserResource {
      * Une ressource doit avoir un contructeur (éventuellement sans arguments)
      */
     public UserResource() {
+    }
+
+    /**
+     * Method prenant en charge les requêtes HTTP GET.
+     *
+     * @return Une liste d'utilisateurs
+     */
+    @GET
+    public List<User> getUsers() {
+        return new ArrayList<User>(users.values());
+    }
+
+    /**
+     * Méthode prenant en charge les requêtes HTTP GET sur /users/{login}
+     *
+     * @return Une instance de User
+     */
+    @GET
+    @Path("{login}")
+    public User getUser(@PathParam("login") String login) {
+        // Si l'utilisateur est inconnu, on renvoie 404
+        if (  ! users.containsKey(login) ) {
+            throw new NotFoundException();
+        }
+        else {
+            return users.get(login);
+        }
     }
 
     /**
