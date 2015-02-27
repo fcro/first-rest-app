@@ -106,4 +106,27 @@ public class UserResourceTest extends JerseyTest {
         int notFound = target("/users").path("tking").request().get().getStatus();
         assertEquals(404, notFound);
     }
+
+    /**
+     *
+     * Vérifie que la suppression d'une ressource est effective
+     */
+    @Test
+    public void test_G_DeleteOneUser() {
+        int code = target("/users").path("jsteed").request().delete().getStatus();
+        assertEquals(204, code);
+
+        int notFound = target("/users").path("jsteed").request().get().getStatus();
+        assertEquals(404, notFound);    
+    }
+
+    /**
+     *
+     * Vérifie que la suppression d'un utilisateur inexistant renvoie 404
+     */
+    @Test
+    public void test_H_DeleteIntexistantUser() {
+        int notFound = target("/users").path("tking").request().delete().getStatus();
+        assertEquals(404, notFound);
+    }
 }
