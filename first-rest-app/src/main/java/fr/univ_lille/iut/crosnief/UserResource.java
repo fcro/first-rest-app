@@ -1,6 +1,8 @@
 package fr.univ_lille.iut.crosnief;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.PUT;
@@ -85,6 +87,32 @@ public class UserResource {
 
             // On renvoie 201 et l'instance de la ressource dans le Header HTTP 'Location'
             URI instanceURI = uriInfo.getAbsolutePathBuilder().path(user.getLogin()).build();
+            return Response.created(instanceURI).build();
+        }
+    }
+
+    /**
+     * Méthode de création d'un utilisateur qui prend en charge les requêtes HTTP POST au format application/x-www-form-urlencoded
+     * La méthode renvoie l'URI de la nouvelle instance en cas de succès
+     *
+     * @param login login de l'utilisateur
+     * @param name nom de l'utilisateur
+     * @param mail le mail de l'utilisateur
+     * @return Response le corps de la réponse est vide, le code de retour HTTP est fixé à 201 si la création est faite
+     *         L'en-tête contient un champs Location avec l'URI de la nouvelle ressource
+     */
+    @POST
+    @Consumes("application/x-www-form-urlencoded")
+        public Response createUser(@FormParam("login") String login, @FormParam("name") String name, @FormParam("mail") String mail) {
+        // Si l'utilisateur existe déjà, renvoyer 409
+        if ( users.containsKey(login) ) {
+            return Response.status(Response.Status.CONFLICT).build();
+        }
+        else {
+            users.put(login, new User(login, name, mail));
+
+            // On renvoie 201 et l'instance de la ressource dans le Header HTTP 'Location'
+            URI instanceURI = uriInfo.getAbsolutePathBuilder().path(login).build();
             return Response.created(instanceURI).build();
         }
     }

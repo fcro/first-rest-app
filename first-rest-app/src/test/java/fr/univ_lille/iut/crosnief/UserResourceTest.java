@@ -1,6 +1,7 @@
 package fr.univ_lille.iut.crosnief;
 
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Application;
@@ -156,5 +157,18 @@ public class UserResourceTest extends JerseyTest {
        Entity<User> userEntity = Entity.entity(inexistant, MediaType.APPLICATION_JSON);
         int notFound = target("/users").path("jsteed").request().put(userEntity).getStatus();
         assertEquals(404, notFound);
+    }
+
+    @Test
+    public void test_K_CreateUserFromForm() {
+        Form form = new Form();
+        form.param("login", "tking");
+        form.param("name", "King");
+        form.param("mail", "tking@mi5.uk");
+
+        Entity<Form> formEntity = Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE);
+        int code = target("/users").request().post(formEntity).getStatus();
+
+        assertEquals(201, code);
     }
 }
